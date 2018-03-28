@@ -589,6 +589,13 @@ describe Chef::Provider::Service::Windows, "load_current_resource", :windows_onl
         expect(Chef::ReservedNames::Win32::Security).not_to receive(:add_account_right).with("wallace", service_right)
         provider.start_service
       end
+
+      it "skips the rights check for LocalSystem" do
+        new_resource.run_as_user("LocalSystem")
+        expect(Chef::ReservedNames::Win32::Security).not_to receive(:get_account_right)
+        expect(Chef::ReservedNames::Win32::Security).not_to receive(:add_account_right)
+        provider.start_service
+      end
     end
   end
 
